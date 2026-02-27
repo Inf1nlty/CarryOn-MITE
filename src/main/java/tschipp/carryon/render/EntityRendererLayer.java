@@ -30,6 +30,7 @@ public class EntityRendererLayer {
 
         renderEntity.rotationYaw      = 0f; renderEntity.prevRotationYaw   = 0f;
         renderEntity.rotationPitch    = 0f; renderEntity.prevRotationPitch = 0f;
+
         if (renderEntity instanceof EntityLivingBase living)
         {
             living.rotationYawHead = 0f; living.prevRotationYawHead = 0f;
