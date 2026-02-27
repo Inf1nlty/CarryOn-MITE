@@ -57,14 +57,14 @@ public class BlockRendererLayer {
 
         if (isChest(block)) {
             GL11.glRotated(180, 0, 1, 0);
+            renderChestWithMeta(block, meta, 1.0f);
+        } else {
+            // Compensate for direction facing encoded in meta.
+            // renderBlockAsItem always renders as if facing SOUTH; rotate Y to match actual facing.
+            applyDirectionRotation(block, meta);
+            RenderBlocks renderBlocks = new RenderBlocks();
+            renderBlocks.renderBlockAsItem(block, meta, 1.0f);
         }
-
-        // Compensate for direction facing encoded in meta.
-        // renderBlockAsItem always renders as if facing SOUTH; rotate Y to match actual facing.
-        applyDirectionRotation(block, meta);
-
-        RenderBlocks renderBlocks = new RenderBlocks();
-        renderBlocks.renderBlockAsItem(block, meta, 1.0f);
 
         GL11.glPopMatrix();
 
@@ -108,14 +108,14 @@ public class BlockRendererLayer {
 
         if (isChest(block)) {
             GL11.glRotated(180, 0, 1, 0);
+            renderChestWithMeta(block, meta, 1.0f);
+        } else {
+            // Compensate for direction facing encoded in meta.
+            // renderBlockAsItem always renders as if facing SOUTH; rotate Y to match actual facing.
+            applyDirectionRotation(block, meta);
+            RenderBlocks renderBlocks = new RenderBlocks();
+            renderBlocks.renderBlockAsItem(block, meta, 1.0f);
         }
-
-        // Compensate for direction facing encoded in meta.
-        // renderBlockAsItem always renders as if facing SOUTH; rotate Y to match actual facing.
-        applyDirectionRotation(block, meta);
-
-        RenderBlocks renderBlocks = new RenderBlocks();
-        renderBlocks.renderBlockAsItem(block, meta, 1.0f);
 
         GL11.glPopMatrix();
 
@@ -125,7 +125,46 @@ public class BlockRendererLayer {
     }
 
     public static boolean isChest(Block block) {
-        return block == Block.chest || block == Block.enderChest || block == Block.chestTrapped;
+        return block == Block.chest || block == Block.enderChest || block == Block.chestTrapped
+                || block == Block.chestCopper || block == Block.chestSilver || block == Block.chestGold
+                || block == Block.chestIron || block == Block.chestMithril || block == Block.chestAdamantium
+                || block == Block.chestAncientMetal;
+    }
+
+    /**
+     * Renders a chest block with the correct facing from meta.
+     *
+     * renderBlockAsItem hard-codes glRotate(90, Y) for renderType 22 and then
+     * calls ChestItemRenderHelper without any world context, so the TileEntity
+     * renderer always falls back to meta=0 (facing south).
+     *
+     * We replicate the transform from TileEntityChestRenderer but substitute
+     * the correct meta-derived angle:
+     *   meta 2 = NORTH → 180°
+     *   meta 3 = SOUTH →   0°
+     *   meta 4 = WEST  →  90°
+     *   meta 5 = EAST  → -90°
+     */
+    private static void renderChestWithMeta(Block block, int meta, float brightness) {
+        // renderBlockAsItem for renderType 22 (chest) hard-codes glRotatef(90, Y) before
+        // calling ChestItemRenderHelper, so the net angle we need to add is:
+        //   meta 2 (NORTH) → target 180° - hardcoded 90° = +90°
+        //   meta 3 (SOUTH) → target   0° - hardcoded 90° = -90°
+        //   meta 4 (WEST)  → target  90° - hardcoded 90° =   0°
+        //   meta 5 (EAST)  → target -90° - hardcoded 90° = -180°
+        float extra;
+        if      (meta == 2) extra =  90f;
+        else if (meta == 3) extra = -90f;
+        else if (meta == 4) extra =   0f;
+        else if (meta == 5) extra = 180f;
+        else                extra = -90f; // fallback: treat as SOUTH
+
+        if (extra != 0f) {
+            GL11.glRotatef(extra, 0f, 1f, 0f);
+        }
+
+        RenderBlocks renderBlocks = new RenderBlocks();
+        renderBlocks.renderBlockAsItem(block, meta, brightness);
     }
 
     /**
