@@ -70,18 +70,15 @@ public abstract class KeyboardMixin {
      * keyboard event loop. When carrying, skip the call for keyBindDrop so pressTime
      * never increments — the key is completely inert regardless of how fast it is pressed.
      */
-    @Redirect(
-        method = "runTick",
-        at = @At(
-            value = "INVOKE",
-            target = "net/minecraft/KeyBinding.onTick(I)V"
-        )
-    )
-    private void redirectOnTick(int keyCode) {
-        if (carryon_isCarrying()) {
-            GameSettings gs = ((Minecraft) (Object) this).gameSettings;
-            if (gs != null && keyCode == gs.keyBindDrop.keyCode) return;
+    @Redirect(method = "runTick", at = @At(value = "INVOKE", target = "net/minecraft/KeyBinding.onTick(I)V"))
+    private void redirectOnTick(int keyCode)
+    {
+        if (carryon_isCarrying())
+        {
+            GameSettings settings = ((Minecraft) (Object) this).gameSettings;
+            if (settings != null && keyCode == settings.keyBindDrop.keyCode) return;
         }
+
         KeyBinding.onTick(keyCode);
     }
 }

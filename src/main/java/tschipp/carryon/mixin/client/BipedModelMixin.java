@@ -19,19 +19,23 @@ public class BipedModelMixin implements ICarrying {
     @Shadow public ModelRenderer bipedLeftArm;
     @Shadow public boolean isSneak;
 
-    @Override public boolean carryOn$isCarryingBlock() {
+    @Override
+    public boolean carryOn$isCarryingBlock() {
         return isCarryingBlock;
     }
 
-    @Override public boolean carryOn$isCarryingEntity() {
+    @Override
+    public boolean carryOn$isCarryingEntity() {
         return isCarryingEntity;
     }
 
-    @Override public void carryOn$setCarryingBlock(boolean block) {
+    @Override
+    public void carryOn$setCarryingBlock(boolean block) {
         isCarryingBlock = block;
     }
 
-    @Override public void carryOn$setCarryingEntity(boolean entity) {
+    @Override
+    public void carryOn$setCarryingEntity(boolean entity) {
         isCarryingEntity = entity;
     }
 
@@ -41,9 +45,10 @@ public class BipedModelMixin implements ICarrying {
         if (isCarryingBlock)
         {
             float x = -1F + (isSneak ? 0f : 0.2f);
-            bipedRightArm.rotateAngleX = x; bipedRightArm.rotateAngleY = 0f; bipedRightArm.rotateAngleZ = 0f;
-            bipedLeftArm.rotateAngleX  = x; bipedLeftArm.rotateAngleY  = 0f; bipedLeftArm.rotateAngleZ  = 0f;
+            bipedRightArm.rotateAngleX = x; bipedRightArm.rotateAngleY = 0f; bipedRightArm.rotateAngleZ =  0f;
+            bipedLeftArm.rotateAngleX  = x; bipedLeftArm.rotateAngleY  = 0f; bipedLeftArm.rotateAngleZ  =  0f;
         }
+
         else if (isCarryingEntity)
         {
             float x = -1.2F + (isSneak ? 0f : 0.2f);

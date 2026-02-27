@@ -19,14 +19,13 @@ public abstract class PlayerRendererMixin {
     @Inject(method = "renderSpecials", at = @At("RETURN"))
     private void onRenderSpecials(AbstractClientPlayer player, float partialTick, CallbackInfo info)
     {
-        ItemStack stack = player.getHeldItemStack();
-        ICarrying model = (ICarrying) this.modelBipedMain;
+        ItemStack stack  = player.getHeldItemStack();
+        ICarrying model  = (ICarrying) this.modelBipedMain;
 
         if (stack != null && stack.getItem() == CarryOnEvents.TILE_ITEM)
         {
             model.carryOn$setCarryingBlock(true);
             model.carryOn$setCarryingEntity(false);
-
             BlockRendererLayer.renderThirdPerson(player, partialTick);
 
         }

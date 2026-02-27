@@ -21,13 +21,17 @@ public abstract class ArmorRendererMixin {
         ItemStack stack = player.getHeldItemStack();
 
         boolean carryBlock = stack != null && stack.getItem() == CarryOnEvents.TILE_ITEM;
+
         boolean carryEntity = stack != null && stack.getItem() == CarryOnEvents.ENTITY_ITEM;
 
-        if (modelArmorChestplate instanceof ICarrying carrying) {
+        if (modelArmorChestplate instanceof ICarrying carrying)
+        {
             carrying.carryOn$setCarryingBlock(carryBlock); carrying.carryOn$setCarryingEntity(carryEntity);
         }
-        if (modelArmor           instanceof ICarrying c) {
-            c.carryOn$setCarryingBlock(carryBlock); c.carryOn$setCarryingEntity(carryEntity);
+
+        if (modelArmor instanceof ICarrying carrying)
+        {
+            carrying.carryOn$setCarryingBlock(carryBlock); carrying.carryOn$setCarryingEntity(carryEntity);
         }
     }
 }
