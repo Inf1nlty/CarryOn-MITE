@@ -54,10 +54,18 @@ public class BlockRendererLayer {
 
         int meta = ItemTile.getMeta(stack);
 
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc == null) return;
+
+        RenderHelper.enableStandardItemLighting();
+        mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+
         GL11.glPushMatrix();
-        GL11.glScaled(2.5, 2.5, 2.5);
-        GL11.glTranslated(0, -0.6, -1);
+        // Scale down and push further away for a natural carry look
+        GL11.glScaled(1.6, 1.6, 1.6);
+        GL11.glTranslated(0, -0.55, -1.4);
         GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         if (isChest(block)) {
             GL11.glRotated(180, 0, 1, 0);
@@ -67,7 +75,9 @@ public class BlockRendererLayer {
         RenderBlocks renderBlocks = new RenderBlocks();
         renderBlocks.renderBlockAsItem(block, meta, 1.0f);
 
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
+        RenderHelper.disableStandardItemLighting();
     }
 
     public static boolean isChest(Block block) {

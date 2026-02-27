@@ -7,9 +7,18 @@ public class ItemEntity extends Item {
     public static final String ENTITY_DATA_KEY = "entityData";
 
     public ItemEntity(int id) {
-        super(id, "apple", 1);  // texture overridden by ItemRegistryEvent.register()
+        super(id, "carryon:carryon_entity", 1);
         this.setMaxStackSize(1);
         this.setUnlocalizedName("carryon.entity_item");
+    }
+
+    /**
+     * Always return our own registered icon.
+     * The entity is rendered visually via EntityRendererLayer, not as a sprite.
+     */
+    @Override
+    public Icon getIconFromSubtype(int subtype) {
+        return this.itemIcon;
     }
 
     @Override

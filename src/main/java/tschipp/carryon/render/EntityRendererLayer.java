@@ -71,11 +71,12 @@ public class EntityRendererLayer {
         renderEntity.setPosition(c0, c1, c2);
 
         RenderManager renderer = RenderManager.instance;
-
         renderEntity.rotationYaw = 0f;
         renderEntity.rotationPitch = 0f;
         float height = renderEntity.height;
         float width = renderEntity.width;
+
+        RenderHelper.enableStandardItemLighting();
 
         GL11.glPushMatrix();
         GL11.glScaled(.8, .8, .8);
@@ -89,6 +90,7 @@ public class EntityRendererLayer {
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glScaled(1, 1, 1);
         GL11.glPopMatrix();
+        RenderHelper.disableStandardItemLighting();
     }
 
     private static void setLightCoords(EntityLivingBase player) {

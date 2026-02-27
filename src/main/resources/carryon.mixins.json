@@ -11,12 +11,14 @@
     "client.FirstPersonMixin",
     "client.MouseMixin",
     "client.KeyboardMixin",
-    "client.GameSettingsMixin"
+    "client.ItemIconOverrideMixin"
   ],
   "mixins": [
     "BlockStateMixin",
     "EntityMixin",
-    "PlayerMixin"
+    "PlayerMixin",
+    "NetServerHandlerMixin",
+    "Packet81Accessor"
   ],
   "injectors": {
     "defaultRequire": 1

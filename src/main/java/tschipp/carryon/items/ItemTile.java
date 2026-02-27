@@ -9,9 +9,21 @@ public class ItemTile extends Item {
     public static final String[] DIRECTION_KEYS = new String[]{"rotation", "rot", "Direction", "face", "direction", "dir", "front"};
 
     public ItemTile(int id) {
-        super(id, "apple", 1);  // texture overridden by ItemRegistryEvent.register()
+        super(id, "carryon:carryon_tile", 1);
         this.setMaxStackSize(1);
         this.setUnlocalizedName("carryon.tile_item");
+    }
+
+    /**
+     * Returns the top-face icon of the carried block.
+     * getIconIndex() in Item is final and calls getIconFromSubtype(subtype),
+     * but subtype carries no block info here. Instead we use render_icon_override
+     * set by ItemIconOverrideMixin before the renderItem call.
+     * This fallback is used for hotbar/inventory 2D rendering.
+     */
+    @Override
+    public Icon getIconFromSubtype(int subtype) {
+        return this.itemIcon;
     }
 
     @Override

@@ -10,25 +10,30 @@ import tschipp.carryon.render.BlockRendererLayer;
 import tschipp.carryon.render.EntityRendererLayer;
 
 /**
- * Injects into ItemRenderer.renderItemInFirstPerson to render the carried
- * block/entity in first-person view.
+ * Injects into ItemRenderer.renderItemInFirstPerson.
+ *
+ * When holding a carry item, we cancel the default sprite rendering
+ * (which would show garbage icons) and render our own block/entity
+ * via BlockRendererLayer / EntityRendererLayer.
  */
 @Mixin(ItemRenderer.class)
 public class FirstPersonMixin {
 
-    @Inject(method = "renderItemInFirstPerson", at = @At("HEAD"))
+    @Inject(method = "renderItemInFirstPerson", at = @At("HEAD"), cancellable = true)
     public void onRenderItem(float partialTicks, CallbackInfo info) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null || mc.thePlayer == null) return;
 
-        EntityPlayer player = mc.thePlayer;
-        ItemStack stack = player.getHeldItemStack();
+        ItemStack stack = mc.thePlayer.getHeldItemStack();
         if (stack == null) return;
 
-        if (stack.getItem() == CarryOnEvents.TILE_ITEM)
-            BlockRendererLayer.renderFirstPerson(player, stack, partialTicks);
-        else if (stack.getItem() == CarryOnEvents.ENTITY_ITEM)
-            EntityRendererLayer.renderFirstPerson(player, stack, partialTicks);
+        if (stack.getItem() == CarryOnEvents.TILE_ITEM) {
+            info.cancel(); // suppress default sprite rendering
+            BlockRendererLayer.renderFirstPerson(mc.thePlayer, stack, partialTicks);
+        } else if (stack.getItem() == CarryOnEvents.ENTITY_ITEM) {
+            info.cancel(); // suppress default sprite rendering
+            EntityRendererLayer.renderFirstPerson(mc.thePlayer, stack, partialTicks);
+        }
     }
 
 }

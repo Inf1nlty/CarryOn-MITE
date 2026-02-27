@@ -1,8 +1,8 @@
 package tschipp.carryon;
 
 import net.fabricmc.api.ModInitializer;
+import net.xiaoyu233.fml.ModResourceManager;
 import net.xiaoyu233.fml.reload.event.MITEEvents;
-import tschipp.carryon.keybinds.CarryOnKeybinds;
 
 public class CarryOn implements ModInitializer {
 
@@ -10,9 +10,8 @@ public class CarryOn implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModResourceManager.addResourcePackDomain(MODID);
+
         MITEEvents.MITE_EVENT_BUS.register(new CarryOnEvents());
-
-        CarryOnKeybinds.init();
     }
-
 }

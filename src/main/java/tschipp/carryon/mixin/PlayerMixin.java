@@ -37,6 +37,7 @@ public abstract class PlayerMixin implements ICarryOnData {
         }
     }
 
+
     @Override
     public NBTTagCompound getCarryOnData() {
         if (this.carryon_data == null) {
