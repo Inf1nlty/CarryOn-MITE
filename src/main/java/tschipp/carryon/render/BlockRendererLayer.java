@@ -2,6 +2,7 @@ package tschipp.carryon.render;
 
 import net.minecraft.*;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import tschipp.carryon.CarryOnEvents;
 import tschipp.carryon.items.ItemTile;
 
@@ -24,6 +25,27 @@ public class BlockRendererLayer {
 
         int meta = ItemTile.getMeta(stack);
 
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc == null) return;
+
+        // Save the entire GL state so we don't contaminate the surrounding render pipeline
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+        // Must bind the block texture atlas BEFORE any rendering - this is what
+        // prevents stray item/entity textures from bleeding into the block render
+        mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1f);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        // Reset color to white to avoid tinting from previous renders
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+        RenderHelper.enableStandardItemLighting();
+        setLightCoords(player);
+
         GL11.glPushMatrix();
         GL11.glRotated(180, 1, 0, 0);
         GL11.glRotated(180, 0, 1, 0);
@@ -38,11 +60,15 @@ public class BlockRendererLayer {
             GL11.glRotated(180, 0, 1, 0);
         }
 
-        setLightCoords(player);
         RenderBlocks renderBlocks = new RenderBlocks();
         renderBlocks.renderBlockAsItem(block, meta, 1.0f);
 
         GL11.glPopMatrix();
+
+        RenderHelper.disableStandardItemLighting();
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        // Restore all saved GL state - this undoes texture bindings, alpha test, blend, etc.
+        GL11.glPopAttrib();
     }
 
     public static void renderFirstPerson(EntityLivingBase entity, ItemStack stack, float partialTicks) {
@@ -57,27 +83,38 @@ public class BlockRendererLayer {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null) return;
 
-        RenderHelper.enableStandardItemLighting();
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+
+        // Bind block texture atlas before rendering
         mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1f);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+        RenderHelper.enableStandardItemLighting();
+        setLightCoords(entity);
 
         GL11.glPushMatrix();
         // Scale down and push further away for a natural carry look
         GL11.glScaled(1.6, 1.6, 1.6);
         GL11.glTranslated(0, -0.55, -1.4);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         if (isChest(block)) {
             GL11.glRotated(180, 0, 1, 0);
         }
 
-        setLightCoords(entity);
         RenderBlocks renderBlocks = new RenderBlocks();
         renderBlocks.renderBlockAsItem(block, meta, 1.0f);
 
-        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
+
         RenderHelper.disableStandardItemLighting();
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glPopAttrib();
     }
 
     public static boolean isChest(Block block) {
