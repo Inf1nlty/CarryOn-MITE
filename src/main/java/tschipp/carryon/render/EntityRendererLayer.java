@@ -48,7 +48,7 @@ public class EntityRendererLayer {
         GL11.glScaled((10 - multiplier) * 0.08, (10 - multiplier) * 0.08, (10 - multiplier) * 0.08);
         GL11.glRotated(180, 0, 1, 0);
         GL11.glTranslated(0.0, height / 2 + -(height / 2) - 1.2,
-                width - 0.1 < 0.7 ? width - 0.1 + (0.7 - (width - 0.1)) : width - 0.1);
+                (width - 0.1 < 0.7 ? width - 0.1 + (0.7 - (width - 0.1)) : width - 0.1) + 0.1);
         GL11.glColor3f(1f, 1f, 1f);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
 
@@ -93,9 +93,9 @@ public class EntityRendererLayer {
         RenderHelper.enableStandardItemLighting();
 
         GL11.glPushMatrix();
-        GL11.glScaled(.8, .8, .8);
+        GL11.glScaled(.55, .55, .55);
         GL11.glRotated(180, 0, 1, 0);
-        GL11.glTranslated(0.0, -height - .1, width + 0.1);
+        GL11.glTranslated(0.0, -height - .1, width + 0.6);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
 
         setLightCoords(player);
