@@ -100,6 +100,15 @@ public class ItemTile extends Item {
             // Place block
             world.setBlock(placeX, placeY, placeZ, containedBlock.blockID, containedMeta, 3);
 
+            // Play the block's placement sound (same as vanilla ItemBlock)
+            StepSound stepSound = containedBlock.stepSound;
+            world.playSoundEffect(
+                    placeX + 0.5, placeY + 0.5, placeZ + 0.5,
+                    stepSound.getPlaceSound(),
+                    (stepSound.getVolume() + 1.0F) / 2.0F,
+                    stepSound.getPitch() * 0.8F
+            );
+
             // Restore tile entity data if available
             NBTTagCompound tileData = getTileData(stack);
             if (tileData != null && !tileData.hasNoTags()) {
