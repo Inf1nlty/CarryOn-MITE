@@ -183,10 +183,10 @@ public class BlockRendererLayer {
         EnumDirection dir = block.getDirectionFacing(meta);
         if (dir == null) return;
         double yRot = 0;
-        if      (dir == EnumDirection.SOUTH) yRot = 180;
-        else if (dir == EnumDirection.WEST)  yRot =  90;
-        else if (dir == EnumDirection.EAST)  yRot = 270;
-        // NORTH → 0° (renderBlockAsItem default already faces north)
+        if      (dir == EnumDirection.NORTH) yRot = 180;
+        else if (dir == EnumDirection.WEST)  yRot = 270;
+        else if (dir == EnumDirection.EAST)  yRot =  90;
+        // SOUTH → 0° (renderBlockAsItem default already faces south)
         if (yRot != 0) {
             GL11.glRotated(yRot, 0, 1, 0);
         }
