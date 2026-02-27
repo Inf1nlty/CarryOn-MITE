@@ -32,6 +32,13 @@ public class EntityRendererLayer {
 
         renderEntity.rotationYaw = 0f;
         renderEntity.rotationPitch = 0f;
+        renderEntity.prevRotationYaw = 0f;
+        renderEntity.prevRotationPitch = 0f;
+        if (renderEntity instanceof EntityLivingBase) {
+            EntityLivingBase living = (EntityLivingBase) renderEntity;
+            living.rotationYawHead = 0f;
+            living.prevRotationYawHead = 0f;
+        }
         float height = renderEntity.height;
         float width = renderEntity.width;
         float multiplier = height * width;
@@ -73,6 +80,13 @@ public class EntityRendererLayer {
         RenderManager renderer = RenderManager.instance;
         renderEntity.rotationYaw = 0f;
         renderEntity.rotationPitch = 0f;
+        renderEntity.prevRotationYaw = 0f;
+        renderEntity.prevRotationPitch = 0f;
+        if (renderEntity instanceof EntityLivingBase) {
+            EntityLivingBase living = (EntityLivingBase) renderEntity;
+            living.rotationYawHead = 0f;
+            living.prevRotationYawHead = 0f;
+        }
         float height = renderEntity.height;
         float width = renderEntity.width;
 

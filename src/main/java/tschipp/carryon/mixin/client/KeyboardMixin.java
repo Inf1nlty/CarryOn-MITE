@@ -84,4 +84,28 @@ public abstract class KeyboardMixin {
             inventory.currentItem = newSlot;
         }
     }
+
+    /**
+     * Redirects keyBindDrop.isPressed() in the while-loop inside runTick.
+     * When carrying, always returns false so the loop never executes,
+     * eliminating both normal drops and the race-condition where queued
+     * Q keypresses fire immediately after picking something up.
+     */
+    @Redirect(
+        method = "runTick",
+        at = @At(
+            value = "INVOKE",
+            target = "net/minecraft/KeyBinding.isPressed()Z",
+            ordinal = 6
+        )
+    )
+    private boolean redirectDropKeyIfCarrying(KeyBinding keyBinding) {
+        if (carryon_isCarrying()) {
+            // Drain the entire pressTime queue so queued keypresses don't fire
+            // later after the player picks something up (race-condition fix).
+            keyBinding.pressTime = 0;
+            return false;
+        }
+        return keyBinding.isPressed();
+    }
 }

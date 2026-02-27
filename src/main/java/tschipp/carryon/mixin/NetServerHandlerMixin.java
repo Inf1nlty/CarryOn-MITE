@@ -54,7 +54,32 @@ public class NetServerHandlerMixin {
             return;
         }
 
-        // Need a raycasting packet to know the target block coords
+        // --- Entity-only packet path (animal/entity right-click sends entity_id directly) ---
+        RightClickFilter filter = ((Packet81Accessor)(Object) packet).getFilter();
+        if (filter.allowsEntityInteractionOnly()) {
+            Entity entity = world.getEntityByID(packet.entity_id);
+            if (entity == null || entity.isDead) return;
+            if (!PickupHandler.canPlayerPickUpEntity(player, entity)) return;
+
+            int playerId = player.entityId;
+            long now = System.currentTimeMillis();
+            Long last = pickupCooldown.get(playerId);
+            if (last != null && now - last < PICKUP_COOLDOWN_MS) {
+                ci.cancel();
+                return;
+            }
+            pickupCooldown.put(playerId, now);
+
+            ItemStack stack = new ItemStack(CarryOnEvents.ENTITY_ITEM);
+            if (ItemEntity.storeEntityData(entity, world, stack)) {
+                entity.setDead();
+                player.setHeldItemStack(stack);
+                ci.cancel();
+            }
+            return;
+        }
+
+        // --- Raycasting path (blocks + entities looked at directly) ---
         if (!packet.requiresRaycasting()) return;
 
         float partialTick = ((Packet81Accessor)(Object) packet).getPartialTick();
@@ -116,13 +141,10 @@ public class NetServerHandlerMixin {
             return;
         }
 
-        // --- Entity pickup ---
+        // --- Entity pickup via raycast (fallback) ---
         if (rc.isEntity()) {
             Entity entity = rc.getEntityHit();
             if (entity == null || entity.isDead) return;
-            if (entity instanceof EntityPlayer) return;
-            if (entity instanceof EntityItem) return;
-            if (entity instanceof EntityArrow) return;
             if (!PickupHandler.canPlayerPickUpEntity(player, entity)) return;
 
             int playerId = player.entityId;
