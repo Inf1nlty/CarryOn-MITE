@@ -45,7 +45,6 @@ public class BlockRendererLayer {
 
         RenderHelper.enableStandardItemLighting();
         setLightCoords(player);
-
         GL11.glPushMatrix();
         GL11.glRotated(180, 1, 0, 0);
         GL11.glRotated(180, 0, 1, 0);
@@ -59,6 +58,10 @@ public class BlockRendererLayer {
         if (isChest(block)) {
             GL11.glRotated(180, 0, 1, 0);
         }
+
+        // Compensate for direction facing encoded in meta.
+        // renderBlockAsItem always renders as if facing SOUTH; rotate Y to match actual facing.
+        applyDirectionRotation(block, meta);
 
         RenderBlocks renderBlocks = new RenderBlocks();
         renderBlocks.renderBlockAsItem(block, meta, 1.0f);
@@ -107,6 +110,10 @@ public class BlockRendererLayer {
             GL11.glRotated(180, 0, 1, 0);
         }
 
+        // Compensate for direction facing encoded in meta.
+        // renderBlockAsItem always renders as if facing SOUTH; rotate Y to match actual facing.
+        applyDirectionRotation(block, meta);
+
         RenderBlocks renderBlocks = new RenderBlocks();
         renderBlocks.renderBlockAsItem(block, meta, 1.0f);
 
@@ -119,6 +126,30 @@ public class BlockRendererLayer {
 
     public static boolean isChest(Block block) {
         return block == Block.chest || block == Block.enderChest || block == Block.chestTrapped;
+    }
+
+    /**
+     * Rotates the GL matrix around Y to compensate for the direction facing stored in meta.
+     * renderBlockAsItem always renders as if the block faces SOUTH (+Z).
+     * We rotate to match the actual facing direction so the carried block looks correct.
+     *
+     * EnumDirection ordinals: SOUTH=0, NORTH=1, EAST=2, WEST=3
+     * Y rotation needed (to make SOUTH-rendered mesh appear as the correct face):
+     *   SOUTH →   0°  (no change)
+     *   WEST  →  90°
+     *   NORTH → 180°
+     *   EAST  → 270°
+     */
+    private static void applyDirectionRotation(Block block, int meta) {
+        EnumDirection dir = block.getDirectionFacing(meta);
+        if (dir == null) return;
+        double yRot = 0;
+        if (dir == EnumDirection.WEST)  yRot =  90;
+        else if (dir == EnumDirection.NORTH) yRot = 180;
+        else if (dir == EnumDirection.EAST)  yRot = 270;
+        if (yRot != 0) {
+            GL11.glRotated(yRot, 0, 1, 0);
+        }
     }
 
     private static void setLightCoords(EntityLivingBase player) {
