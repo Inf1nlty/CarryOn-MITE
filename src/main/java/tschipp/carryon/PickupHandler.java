@@ -19,8 +19,11 @@ public class PickupHandler {
     }
 
     public static boolean canPlayerPickUpEntity(EntityPlayer player, Entity entity) {
-        // Allow carrying any living entity that isn't a player
-        return entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer);
+        // Allow carrying animals (all EntityAnimal subclasses)
+        if (entity instanceof EntityAnimal) return true;
+        // Allow carrying baby villagers only
+        if (entity instanceof EntityVillager && ((EntityVillager) entity).isChild()) return true;
+        return false;
     }
 
     /**
