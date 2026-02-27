@@ -153,11 +153,11 @@ public class BlockRendererLayer {
         //   meta 4 (WEST)  → target  90° - hardcoded 90° =   0°
         //   meta 5 (EAST)  → target -90° - hardcoded 90° = -180°
         float extra;
-        if      (meta == 2) extra =  90f;
-        else if (meta == 3) extra = -90f;
-        else if (meta == 4) extra =   0f;
-        else if (meta == 5) extra = 180f;
-        else                extra = -90f; // fallback: treat as SOUTH
+        if      (meta == 2) extra = 180f;
+        else if (meta == 3) extra =   0f;
+        else if (meta == 4) extra =  90f;
+        else if (meta == 5) extra = -90f;
+        else                extra =   0f; // fallback
 
         if (extra != 0f) {
             GL11.glRotatef(extra, 0f, 1f, 0f);
@@ -183,9 +183,10 @@ public class BlockRendererLayer {
         EnumDirection dir = block.getDirectionFacing(meta);
         if (dir == null) return;
         double yRot = 0;
-        if (dir == EnumDirection.WEST)  yRot =  90;
-        else if (dir == EnumDirection.NORTH) yRot = 180;
+        if      (dir == EnumDirection.SOUTH) yRot = 180;
+        else if (dir == EnumDirection.WEST)  yRot =  90;
         else if (dir == EnumDirection.EAST)  yRot = 270;
+        // NORTH → 0° (renderBlockAsItem default already faces north)
         if (yRot != 0) {
             GL11.glRotated(yRot, 0, 1, 0);
         }
