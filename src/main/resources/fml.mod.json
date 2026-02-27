@@ -14,6 +14,7 @@
     "Purplicious_Cow",
     "Inf1nlty"
   ],
+  "license": "LGPL-3.0",
   "entrypoints": {
     "main": [
       "tschipp.carryon.CarryOn"

@@ -28,13 +28,9 @@ dependencies {
     fml "com.github.MinecraftIsTooEasy:FishModLoader:3.4.2"
     implementation "com.github.MinecraftIsTooEasy:FishModLoader:3.4.2"
 
+    implementation "com.github.MinecraftIsTooEasy:Gson:2.10.1"
     implementation "com.github.MinecraftIsTooEasy:ManyLib:2.3.0"
     implementation "com.github.MinecraftIsTooEasy:ModMenu:10.1.1"
-    implementation "com.github.MinecraftIsTooEasy:RustedIronCore:1.5.0"
-
-    implementation "com.github.MinecraftIsTooEasy:Gson:2.10.1"
-    implementation "com.github.MinecraftIsTooEasy:FastUtil:8.5.12"
-    implementation "com.github.MinecraftIsTooEasy:EMI:1.1.24"
 }
 
 def fmlResolvedFile = configurations.fml.files.iterator().next()

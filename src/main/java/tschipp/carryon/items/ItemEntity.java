@@ -19,16 +19,6 @@ public class ItemEntity extends Item {
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        if (hasEntityData(stack)) {
-            String name = getEntityName(stack);
-            if (name != null && !name.isEmpty())
-                return StatCollector.translateToLocal("entity." + name + ".name");
-        }
-        return StatCollector.translateToLocal(this.getUnlocalizedName() + ".name");
-    }
-
-    @Override
     public boolean onItemRightClick(EntityPlayer player, float partial_tick, boolean ctrl_is_down)
     {
         ItemStack stack = player.getHeldItemStack();

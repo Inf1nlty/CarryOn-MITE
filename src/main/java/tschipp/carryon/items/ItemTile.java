@@ -19,19 +19,6 @@ public class ItemTile extends Item {
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        if (hasTileData(stack)) {
-            Block block = getBlock(stack);
-            if (block != null && block.blockID != 0) {
-                ItemStack blockStack = new ItemStack(block, 1, getMeta(stack));
-                return blockStack.getItem().getItemStackDisplayName(blockStack);
-            }
-        }
-
-        return StatCollector.translateToLocal(this.getUnlocalizedName() + ".name");
-    }
-
-    @Override
     public boolean onItemRightClick(EntityPlayer player, float partial_tick, boolean ctrl_is_down)
     {
         ItemStack stack = player.getHeldItemStack();
