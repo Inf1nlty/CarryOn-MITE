@@ -12,10 +12,6 @@ public class ItemEntity extends Item {
         this.setUnlocalizedName("carryon.entity_item");
     }
 
-    /**
-     * Always return our own registered icon.
-     * The entity is rendered visually via EntityRendererLayer, not as a sprite.
-     */
     @Override
     public Icon getIconFromSubtype(int subtype) {
         return this.itemIcon;
@@ -24,93 +20,57 @@ public class ItemEntity extends Item {
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (hasEntityData(stack)) {
-            String entityName = getEntityName(stack);
-            if (entityName != null && !entityName.isEmpty()) {
-                return StatCollector.translateToLocal("entity." + entityName + ".name");
-            }
+            String name = getEntityName(stack);
+            if (name != null && !name.isEmpty())
+                return StatCollector.translateToLocal("entity." + name + ".name");
         }
-        // Fallback: return the translated item name so we never show a raw unlocalized key
         return StatCollector.translateToLocal(this.getUnlocalizedName() + ".name");
     }
 
-    public static boolean hasEntityData(ItemStack stack) {
-        if (stack == null) return false;
-        if (stack.stackTagCompound != null) {
-            NBTTagCompound tag = stack.stackTagCompound;
-            return tag.hasKey(ENTITY_DATA_KEY) && tag.hasKey("entity");
-        }
-        return false;
-    }
-
-    public static boolean storeEntityData(Entity entity, World world, ItemStack stack) {
-        if (entity == null || stack == null || stack.stackSize == 0)
-            return false;
-
-        NBTTagCompound entityData = new NBTTagCompound();
-        entity.writeToNBT(entityData);
-
-        // Get entity name from EntityList
-        String name = EntityList.getEntityString(entity);
-        if (name == null || name.isEmpty())
-            return false;
-
-        if (stack.stackTagCompound == null) {
-            stack.stackTagCompound = new NBTTagCompound();
-        }
-        NBTTagCompound tag = stack.stackTagCompound;
-        if (tag.hasKey(ENTITY_DATA_KEY))
-            return false;
-
-        tag.setCompoundTag(ENTITY_DATA_KEY, entityData);
-        tag.setString("entity", name);
-        return true;
-    }
-
-    /**
-     * Called when right-clicking while holding the entity item.
-     * Places the entity at the targeted block.
-     */
     @Override
-    public boolean onItemRightClick(EntityPlayer player, float partial_tick, boolean ctrl_is_down) {
+    public boolean onItemRightClick(EntityPlayer player, float partial_tick, boolean ctrl_is_down)
+    {
         ItemStack stack = player.getHeldItemStack();
-        if (stack == null || !hasEntityData(stack)) {
-            return false;
-        }
 
-        RaycastCollision rc = player.getSelectedObject(partial_tick, false);
-        if (rc == null || !rc.isBlock()) {
-            return false;
-        }
+        if (!hasEntityData(stack)) return false;
+
+        RaycastCollision raycastCollision = player.getSelectedObject(partial_tick, false);
+
+        if (raycastCollision == null || !raycastCollision.isBlock()) return false;
 
         World world = player.worldObj;
-        int x = rc.block_hit_x;
-        int y = rc.block_hit_y;
-        int z = rc.block_hit_z;
 
-        int placeX = rc.neighbor_block_x;
-        int placeY = rc.neighbor_block_y;
-        int placeZ = rc.neighbor_block_z;
+        int x = raycastCollision.block_hit_x, y = raycastCollision.block_hit_y, z = raycastCollision.block_hit_z;
+        int placeX = raycastCollision.neighbor_block_x, placeY = raycastCollision.neighbor_block_y, placeZ = raycastCollision.neighbor_block_z;
 
-        Block clickedBlock = Block.blocksList[world.getBlockId(x, y, z)];
-        if (clickedBlock != null && clickedBlock.isAlwaysReplaceable()) {
-            placeX = x;
-            placeY = y;
-            placeZ = z;
+        Block clicked = Block.blocksList[world.getBlockId(x, y, z)];
+
+        if (clicked != null && clicked.isAlwaysReplaceable())
+        {
+            placeX = x; placeY = y; placeZ = z;
         }
 
-        if (!world.isRemote) {
+        if (!world.isRemote)
+        {
             Entity entity = getEntity(stack, world);
-            if (entity != null) {
+
+            if (entity != null)
+            {
                 entity.setPosition(placeX + 0.5, placeY, placeZ + 0.5);
-                entity.rotationYaw = 180 + player.rotationYaw;
+                entity.rotationYaw   = 180 + player.rotationYaw;
                 entity.rotationPitch = 0.0f;
+
                 world.spawnEntityInWorld(entity);
+
                 clearEntityData(stack);
+
                 player.setHeldItemStack(null);
+
                 return true;
             }
-        } else {
-            // Client side - consume optimistically
+        }
+        else
+        {
             return true;
         }
 
@@ -118,71 +78,97 @@ public class ItemEntity extends Item {
     }
 
     @Override
-    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-        if (hasEntityData(stack)) {
-            if (entity instanceof EntityLivingBase) {
-                if (entity instanceof EntityPlayer && ((EntityPlayer) entity).inCreativeMode())
-                    return;
+    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected)
+    {
+        if (hasEntityData(stack))
+        {
+            if (entity instanceof EntityLivingBase living)
+            {
+                if (living instanceof EntityPlayer p && p.inCreativeMode()) return;
 
-                ((EntityLivingBase) entity).addPotionEffect(
-                        new PotionEffect(Potion.moveSlowdown.id, 1, potionLevel(stack), false));
+                living.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 1, potionLevel(stack), false));
             }
-        } else {
-            if (isSelected) {
-                stack.stackSize = 0;
-            }
+        }
+        else if (isSelected)
+        {
+            stack.stackSize = 0;
         }
     }
 
-    public static void clearEntityData(ItemStack stack) {
-        if (stack != null && stack.stackTagCompound != null) {
-            NBTTagCompound tag = stack.stackTagCompound;
-            tag.removeTag(ENTITY_DATA_KEY);
-            tag.removeTag("entity");
+    public static boolean hasEntityData(ItemStack stack)
+    {
+        return stack != null && stack.stackTagCompound != null && stack.stackTagCompound.hasKey(ENTITY_DATA_KEY) && stack.stackTagCompound.hasKey("entity");
+    }
+
+    public static boolean storeEntityData(Entity entity, World world, ItemStack stack)
+    {
+        if (entity == null || stack == null || stack.stackSize == 0) return false;
+
+        String name = EntityList.getEntityString(entity);
+
+        if (name == null || name.isEmpty()) return false;
+
+        NBTTagCompound entityData = new NBTTagCompound();
+
+        entity.writeToNBT(entityData);
+
+        if (stack.stackTagCompound == null) stack.stackTagCompound = new NBTTagCompound();
+
+        NBTTagCompound tag = stack.stackTagCompound;
+
+        if (tag.hasKey(ENTITY_DATA_KEY)) return false;
+
+        tag.setCompoundTag(ENTITY_DATA_KEY, entityData);
+        tag.setString("entity", name);
+
+        return true;
+    }
+
+    public static void clearEntityData(ItemStack stack)
+    {
+        if (stack != null && stack.stackTagCompound != null)
+        {
+            stack.stackTagCompound.removeTag(ENTITY_DATA_KEY);
+            stack.stackTagCompound.removeTag("entity");
         }
     }
 
-    public static NBTTagCompound getEntityData(ItemStack stack) {
-        if (stack != null && stack.stackTagCompound != null) {
-            NBTTagCompound tag = stack.stackTagCompound;
-            if (tag.hasKey(ENTITY_DATA_KEY)) {
-                return tag.getCompoundTag(ENTITY_DATA_KEY);
-            }
-        }
+    public static NBTTagCompound getEntityData(ItemStack stack)
+    {
+        if (stack != null && stack.stackTagCompound != null && stack.stackTagCompound.hasKey(ENTITY_DATA_KEY))
+            return stack.stackTagCompound.getCompoundTag(ENTITY_DATA_KEY);
+
         return null;
     }
 
-    public static Entity getEntity(ItemStack stack, World world) {
+    public static Entity getEntity(ItemStack stack, World world)
+    {
         if (world == null || !hasEntityData(stack)) return null;
 
         String name = getEntityName(stack);
+
         if (name == null || name.isEmpty()) return null;
 
-        NBTTagCompound entityData = getEntityData(stack);
         Entity entity = EntityList.createEntityByName(name, world);
-        if (entity != null && entityData != null) {
-            entity.readFromNBT(entityData);
-        }
+
+        if (entity != null) entity.readFromNBT(getEntityData(stack));
+
         return entity;
     }
 
-    public static String getEntityName(ItemStack stack) {
-        if (stack != null && stack.stackTagCompound != null) {
-            NBTTagCompound tag = stack.stackTagCompound;
-            if (tag.hasKey("entity")) {
-                return tag.getString("entity");
-            }
-        }
+    public static String getEntityName(ItemStack stack)
+    {
+        if (stack != null && stack.stackTagCompound != null && stack.stackTagCompound.hasKey("entity"))
+            return stack.stackTagCompound.getString("entity");
         return null;
     }
 
-    private int potionLevel(ItemStack stack) {
-        // Estimate entity size from stored NBT instead of spawning the entity
+    private int potionLevel(ItemStack stack)
+    {
         NBTTagCompound data = getEntityData(stack);
+
         if (data == null) return 1;
-        // Larger entity data = heavier carry penalty
-        int i = data.toString().length() / 500 + 1;
-        if (i > 4) i = 4;
-        return i;
+
+        return Math.max(1, Math.min(4, data.toString().length() / 500 + 1));
     }
 }

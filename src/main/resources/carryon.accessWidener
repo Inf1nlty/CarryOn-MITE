@@ -1,2 +1,5 @@
 accessWidener v2 named
 accessible field net/minecraft/Packet81RightClick filter Lnet/minecraft/RightClickFilter;
+accessible field net/minecraft/Packet81RightClick partial_tick F
+accessible field net/minecraft/Packet81RightClick entity_id I
+accessible field net/minecraft/KeyBinding pressTime I

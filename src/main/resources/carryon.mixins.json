@@ -9,7 +9,6 @@
     "client.ArmorRendererMixin",
     "client.BipedModelMixin",
     "client.FirstPersonMixin",
-    "client.MouseMixin",
     "client.KeyboardMixin",
     "client.ItemIconOverrideMixin"
   ],
@@ -17,8 +16,7 @@
     "BlockStateMixin",
     "EntityMixin",
     "PlayerMixin",
-    "NetServerHandlerMixin",
-    "Packet81Accessor"
+    "NetServerHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
