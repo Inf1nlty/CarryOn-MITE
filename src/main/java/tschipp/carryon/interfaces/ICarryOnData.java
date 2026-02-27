@@ -4,8 +4,8 @@ import net.minecraft.NBTTagCompound;
 
 public interface ICarryOnData {
 
-    public NBTTagCompound getCarryOnData();
+    public NBTTagCompound carryOn$getCarryOnData();
 
-    public void setCarryOnData(NBTTagCompound tag);
+    public void carryOn$setCarryOnData(NBTTagCompound tag);
 
 }

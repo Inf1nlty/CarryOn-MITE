@@ -24,22 +24,22 @@ public abstract class PlayerRendererMixin {
 
         if (stack != null && stack.getItem() == CarryOnEvents.TILE_ITEM)
         {
-            model.setCarryingBlock(true);
-            model.setCarryingEntity(false);
+            model.carryOn$setCarryingBlock(true);
+            model.carryOn$setCarryingEntity(false);
 
             BlockRendererLayer.renderThirdPerson(player, partialTick);
 
         }
         else if (stack != null && stack.getItem() == CarryOnEvents.ENTITY_ITEM)
         {
-            model.setCarryingBlock(false);
-            model.setCarryingEntity(true);
+            model.carryOn$setCarryingBlock(false);
+            model.carryOn$setCarryingEntity(true);
             EntityRendererLayer.renderThirdPerson(player, partialTick);
         }
         else
         {
-            model.setCarryingBlock(false);
-            model.setCarryingEntity(false);
+            model.carryOn$setCarryingBlock(false);
+            model.carryOn$setCarryingEntity(false);
         }
     }
 }

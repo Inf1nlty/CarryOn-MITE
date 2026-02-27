@@ -24,10 +24,10 @@ public abstract class ArmorRendererMixin {
         boolean carryEntity = stack != null && stack.getItem() == CarryOnEvents.ENTITY_ITEM;
 
         if (modelArmorChestplate instanceof ICarrying carrying) {
-            carrying.setCarryingBlock(carryBlock); carrying.setCarryingEntity(carryEntity);
+            carrying.carryOn$setCarryingBlock(carryBlock); carrying.carryOn$setCarryingEntity(carryEntity);
         }
         if (modelArmor           instanceof ICarrying c) {
-            c.setCarryingBlock(carryBlock); c.setCarryingEntity(carryEntity);
+            c.carryOn$setCarryingBlock(carryBlock); c.carryOn$setCarryingEntity(carryEntity);
         }
     }
 }

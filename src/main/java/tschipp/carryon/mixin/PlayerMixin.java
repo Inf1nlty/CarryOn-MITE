@@ -26,7 +26,7 @@ public abstract class PlayerMixin implements ICarryOnData {
     }
 
     @Override
-    public NBTTagCompound getCarryOnData()
+    public NBTTagCompound carryOn$getCarryOnData()
     {
         if (carryon_data == null) carryon_data = new NBTTagCompound();
 
@@ -34,7 +34,7 @@ public abstract class PlayerMixin implements ICarryOnData {
     }
 
     @Override
-    public void setCarryOnData(NBTTagCompound tag)
+    public void carryOn$setCarryOnData(NBTTagCompound tag)
     {
         carryon_data = tag;
     }

@@ -2,10 +2,10 @@ package tschipp.carryon.render;
 
 public interface ICarrying {
 
-    public boolean isCarryingBlock();
-    public boolean isCarryingEntity();
+    public boolean carryOn$isCarryingBlock();
+    public boolean carryOn$isCarryingEntity();
 
-    public void setCarryingBlock(boolean isCarrying);
-    public void setCarryingEntity(boolean isCarrying);
+    public void carryOn$setCarryingBlock(boolean isCarrying);
+    public void carryOn$setCarryingEntity(boolean isCarrying);
 
 }

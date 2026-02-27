@@ -19,19 +19,19 @@ public class BipedModelMixin implements ICarrying {
     @Shadow public ModelRenderer bipedLeftArm;
     @Shadow public boolean isSneak;
 
-    @Override public boolean isCarryingBlock() {
+    @Override public boolean carryOn$isCarryingBlock() {
         return isCarryingBlock;
     }
 
-    @Override public boolean isCarryingEntity() {
+    @Override public boolean carryOn$isCarryingEntity() {
         return isCarryingEntity;
     }
 
-    @Override public void setCarryingBlock(boolean block) {
+    @Override public void carryOn$setCarryingBlock(boolean block) {
         isCarryingBlock = block;
     }
 
-    @Override public void setCarryingEntity(boolean entity) {
+    @Override public void carryOn$setCarryingEntity(boolean entity) {
         isCarryingEntity = entity;
     }
 
