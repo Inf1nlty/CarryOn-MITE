@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tschipp.carryon.CarryOnEvents;
-import tschipp.carryon.render.BlockRendererLayer;
-import tschipp.carryon.render.EntityRendererLayer;
-import tschipp.carryon.render.ICarrying;
+import tschipp.carryon.client.render.BlockRendererLayer;
+import tschipp.carryon.client.render.EntityRendererLayer;
+import tschipp.carryon.client.render.ICarrying;
 
 @Mixin(RenderPlayer.class)
 public abstract class PlayerRendererMixin {

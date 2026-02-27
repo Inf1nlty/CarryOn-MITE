@@ -13,9 +13,9 @@
     "client.ItemIconOverrideMixin"
   ],
   "mixins": [
-    "BlockStateMixin",
+    "BlockMixin",
     "EntityMixin",
-    "PlayerMixin",
+    "EntityPlayerMixin",
     "NetServerHandlerMixin"
   ],
   "injectors": {

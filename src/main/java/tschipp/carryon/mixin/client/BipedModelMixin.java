@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tschipp.carryon.render.ICarrying;
+import tschipp.carryon.client.render.ICarrying;
 
 @Mixin(ModelBiped.class)
 public class BipedModelMixin implements ICarrying {

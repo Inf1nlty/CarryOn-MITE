@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import tschipp.carryon.CarryOnEvents;
-import tschipp.carryon.render.ICarrying;
+import tschipp.carryon.client.render.ICarrying;
 
 @Mixin(RenderPlayer.class)
 public abstract class ArmorRendererMixin {

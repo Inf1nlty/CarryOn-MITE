@@ -1,6 +1,7 @@
 package tschipp.carryon.items;
 
 import net.minecraft.*;
+import tschipp.carryon.CarryOnData;
 
 public class ItemTile extends Item {
 
@@ -134,6 +135,7 @@ public class ItemTile extends Item {
         tag.setCompoundTag(TILE_DATA_KEY, tileNbt);
         tag.setInteger("blockId", world.getBlockId(x, y, z));
         tag.setInteger("blockMeta", world.getBlockMetadata(x, y, z));
+        tag.setByte(CarryOnData.NO_DROP_KEY, (byte) 1);
 
         return true;
     }
@@ -145,6 +147,7 @@ public class ItemTile extends Item {
             stack.stackTagCompound.removeTag(TILE_DATA_KEY);
             stack.stackTagCompound.removeTag("blockId");
             stack.stackTagCompound.removeTag("blockMeta");
+            stack.stackTagCompound.removeTag(CarryOnData.NO_DROP_KEY);
         }
     }
 

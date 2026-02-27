@@ -1,4 +1,4 @@
-package tschipp.carryon.render;
+package tschipp.carryon.client.render;
 
 import net.minecraft.*;
 import org.lwjgl.opengl.GL11;

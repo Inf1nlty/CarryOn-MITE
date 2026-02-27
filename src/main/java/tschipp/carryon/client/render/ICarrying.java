@@ -1,4 +1,4 @@
-package tschipp.carryon.render;
+package tschipp.carryon.client.render;
 
 public interface ICarrying {
 

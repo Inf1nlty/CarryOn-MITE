@@ -9,7 +9,7 @@ import tschipp.carryon.CarryOnEvents;
 import tschipp.carryon.PickupHandler;
 
 @Mixin(Block.class)
-public class BlockStateMixin {
+public class BlockMixin {
 
     @Inject(method = "onBlockActivated", at = @At("HEAD"), cancellable = true)
     public void onBlockActivated(World world, int x, int y, int z, EntityPlayer player, EnumFace face, float offsetX, float offsetY, float offsetZ, CallbackInfoReturnable<Boolean> info)

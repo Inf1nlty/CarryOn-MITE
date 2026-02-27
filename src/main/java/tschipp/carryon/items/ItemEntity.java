@@ -1,6 +1,7 @@
 package tschipp.carryon.items;
 
 import net.minecraft.*;
+import tschipp.carryon.CarryOnData;
 
 public class ItemEntity extends Item {
 
@@ -120,6 +121,7 @@ public class ItemEntity extends Item {
 
         tag.setCompoundTag(ENTITY_DATA_KEY, entityData);
         tag.setString("entity", name);
+        tag.setByte(CarryOnData.NO_DROP_KEY, (byte) 1);
 
         return true;
     }
@@ -130,6 +132,7 @@ public class ItemEntity extends Item {
         {
             stack.stackTagCompound.removeTag(ENTITY_DATA_KEY);
             stack.stackTagCompound.removeTag("entity");
+            stack.stackTagCompound.removeTag(CarryOnData.NO_DROP_KEY);
         }
     }
 
