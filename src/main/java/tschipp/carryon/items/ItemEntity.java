@@ -29,7 +29,8 @@ public class ItemEntity extends Item {
                 return StatCollector.translateToLocal("entity." + entityName + ".name");
             }
         }
-        return "";
+        // Fallback: return the translated item name so we never show a raw unlocalized key
+        return StatCollector.translateToLocal(this.getUnlocalizedName() + ".name");
     }
 
     public static boolean hasEntityData(ItemStack stack) {

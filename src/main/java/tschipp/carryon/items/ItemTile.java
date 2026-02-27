@@ -37,7 +37,8 @@ public class ItemTile extends Item {
                 return blockStack.getItem().getItemStackDisplayName(blockStack);
             }
         }
-        return "";
+        // Fallback: return the translated item name so we never show a raw unlocalized key
+        return StatCollector.translateToLocal(this.getUnlocalizedName() + ".name");
     }
 
     /**
