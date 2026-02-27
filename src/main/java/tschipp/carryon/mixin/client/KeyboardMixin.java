@@ -1,28 +1,37 @@
 package tschipp.carryon.mixin.client;
 
 import net.minecraft.*;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tschipp.carryon.CarryOnEvents;
 
 /**
- * Prevents the player from opening their inventory while carrying.
+ * Prevents the player from opening inventory or switching hotbar slots while carrying.
  *
- * In MITE 1.6.4, the inventory is opened in Minecraft.runTick() via:
- *   while (gameSettings.keyBindInventory.isPressed()) {
- *       displayGuiScreen(new GuiInventory(thePlayer));
- *   }
- *
- * We inject before the GuiInventory constructor is invoked to cancel it.
+ * Hotbar switching has two paths in runTick():
+ *  1. Scroll wheel  → inventory.changeCurrentItem(dwheel)   (INVOKE redirect)
+ *  2. Number keys   → inventory.currentItem = var12         (FIELD redirect)
  */
 @Mixin(Minecraft.class)
 public abstract class KeyboardMixin {
 
     @Shadow
     public EntityClientPlayerMP thePlayer;
+
+    /** Checks whether the player is currently holding a CarryOn carry item. */
+    @Unique
+    private boolean carryon_isCarrying() {
+        if (thePlayer == null) return false;
+        ItemStack held = thePlayer.getHeldItemStack();
+        return held != null && (held.getItem() == CarryOnEvents.TILE_ITEM
+                || held.getItem() == CarryOnEvents.ENTITY_ITEM);
+    }
 
     /**
      * Cancels inventory opening if the player is carrying something.
@@ -36,13 +45,43 @@ public abstract class KeyboardMixin {
         cancellable = true
     )
     private void cancelInventoryIfCarrying(CallbackInfo ci) {
-        if (thePlayer != null) {
-            ItemStack held = thePlayer.getHeldItemStack();
-            if (held != null && (held.getItem() == CarryOnEvents.TILE_ITEM
-                    || held.getItem() == CarryOnEvents.ENTITY_ITEM)) {
-                ci.cancel();
-            }
+        if (carryon_isCarrying()) {
+            ci.cancel();
         }
     }
 
+    /**
+     * Redirects inventory.changeCurrentItem(dwheel) — the scroll wheel path.
+     * When carrying, we swallow the call entirely.
+     */
+    @Redirect(
+        method = "runTick",
+        at = @At(
+            value = "INVOKE",
+            target = "net/minecraft/InventoryPlayer.changeCurrentItem(I)V"
+        )
+    )
+    private void redirectScrollHotbar(InventoryPlayer inventory, int direction) {
+        if (!carryon_isCarrying()) {
+            inventory.changeCurrentItem(direction);
+        }
+    }
+
+    /**
+     * Redirects inventory.currentItem = var12 — the number-key path.
+     * When carrying, we write back the current slot unchanged.
+     */
+    @Redirect(
+        method = "runTick",
+        at = @At(
+            value = "FIELD",
+            target = "net/minecraft/InventoryPlayer.currentItem:I",
+            opcode = Opcodes.PUTFIELD
+        )
+    )
+    private void redirectNumberKeyHotbar(InventoryPlayer inventory, int newSlot) {
+        if (!carryon_isCarrying()) {
+            inventory.currentItem = newSlot;
+        }
+    }
 }
