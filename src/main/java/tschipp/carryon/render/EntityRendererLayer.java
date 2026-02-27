@@ -1,0 +1,105 @@
+package tschipp.carryon.render;
+
+import net.minecraft.*;
+import org.lwjgl.opengl.GL11;
+import tschipp.carryon.CarryOnEvents;
+import tschipp.carryon.items.ItemEntity;
+
+/**
+ * Renders the carried entity on the player's head area (third-person view).
+ * In MITE 1.6.4 there's no "layer" system; rendering is called from
+ * PlayerRendererMixin.renderSpecials.
+ */
+public class EntityRendererLayer {
+
+    public static void renderThirdPerson(AbstractClientPlayer player, float partialTicks) {
+        ItemStack stack = player.getHeldItemStack();
+        if (stack == null || stack.getItem() != CarryOnEvents.ENTITY_ITEM) return;
+        if (!ItemEntity.hasEntityData(stack)) return;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc == null) return;
+
+        Entity renderEntity = ItemEntity.getEntity(stack, player.worldObj);
+        if (renderEntity == null) return;
+
+        double c0 = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+        double c1 = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
+        double c2 = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+        renderEntity.setPosition(c0, c1, c2);
+
+        RenderManager renderer = RenderManager.instance;
+
+        renderEntity.rotationYaw = 0f;
+        renderEntity.rotationPitch = 0f;
+        float height = renderEntity.height;
+        float width = renderEntity.width;
+        float multiplier = height * width;
+
+        GL11.glPushMatrix();
+        GL11.glScaled(1, -1, 1);
+        GL11.glScaled((10 - multiplier) * 0.08, (10 - multiplier) * 0.08, (10 - multiplier) * 0.08);
+        GL11.glRotated(180, 0, 1, 0);
+        GL11.glTranslated(0.0, height / 2 + -(height / 2) - 1.2,
+                width - 0.1 < 0.7 ? width - 0.1 + (0.7 - (width - 0.1)) : width - 0.1);
+        GL11.glColor3f(1f, 1f, 1f);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+
+        if (player.isSneaking()) {
+            GL11.glTranslated(0, -0.1, 0);
+        }
+
+        renderer.renderEntityWithPosYaw(renderEntity, 0, 0, 0, 0, partialTicks);
+
+        GL11.glScaled(1, 1, 1);
+        GL11.glPopMatrix();
+    }
+
+    public static void renderFirstPerson(EntityLivingBase player, ItemStack stack, float partialTicks) {
+        if (stack == null || stack.getItem() != CarryOnEvents.ENTITY_ITEM) return;
+        if (!ItemEntity.hasEntityData(stack)) return;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc == null) return;
+
+        Entity renderEntity = ItemEntity.getEntity(stack, player.worldObj);
+        if (renderEntity == null) return;
+
+        double c0 = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+        double c1 = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
+        double c2 = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+        renderEntity.setPosition(c0, c1, c2);
+
+        RenderManager renderer = RenderManager.instance;
+
+        renderEntity.rotationYaw = 0f;
+        renderEntity.rotationPitch = 0f;
+        float height = renderEntity.height;
+        float width = renderEntity.width;
+
+        GL11.glPushMatrix();
+        GL11.glScaled(.8, .8, .8);
+        GL11.glRotated(180, 0, 1, 0);
+        GL11.glTranslated(0.0, -height - .1, width + 0.1);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+
+        setLightCoords(player);
+        renderer.renderEntityWithPosYaw(renderEntity, 0, 0, 0, 0, partialTicks);
+
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glScaled(1, 1, 1);
+        GL11.glPopMatrix();
+    }
+
+    private static void setLightCoords(EntityLivingBase player) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc == null || mc.theWorld == null) return;
+        int x = (int) player.posX;
+        int y = (int) (player.posY + player.getEyeHeight());
+        int z = (int) player.posZ;
+        int lightValue = mc.theWorld.getLightBrightnessForSkyBlocks(x, y, z, 0);
+        float var3 = (float) (lightValue & 0xFFFF);
+        float var4 = (float) (lightValue >> 16);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, var3, var4);
+    }
+}

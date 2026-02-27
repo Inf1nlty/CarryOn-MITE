@@ -1,0 +1,40 @@
+villager.profession.farmer=农民
+villager.profession.librarian=图书管理员
+villager.profession.priest=牧师
+villager.profession.smith=铁匠
+villager.profession.butcher=屠夫
+villager.profession.unknown=未知
+
+ric.statement=[§b锈铁核心§r]已成功装载, 需注意本模组是许多模组兼容的桥梁, 而非某一个单体模组包含了全部游戏内容; §c禁止§r称呼该客户端为XX版!
+ric.gui_title=Minecraft 1.6.4-MITE(Modded, 锈铁核心已加载)锈铁核心是许多模组兼容的桥梁, 而非某一个单体模组包含了全部游戏内容; 禁止称呼该客户端为XX版!
+ric.statement_countdown=本窗口将在%d秒后自动消失
+
+ric.gui.resourcepacks.info=MITE Resource Pack 1.6.4.zip资源包必须安装!
+ric.gui.resourcepacks.info.website.1=访问
+ric.gui.resourcepacks.info.website.2=获取更多信息
+
+biome.ocean.name=海洋
+biome.plains.name=平原
+biome.desert.name=沙漠
+biome.extremeHills.name=山地
+biome.forest.name=森林
+biome.taiga.name=针叶林
+biome.swampland.name=沼泽
+biome.river.name=河流
+biome.hell.name=下界
+biome.underworld.name=深岩
+biome.sky.name=末地
+biome.frozenOcean.name=冻洋
+biome.frozenRiver.name=冻河
+biome.icePlains.name=雪原
+biome.iceMountains.name=雪山
+biome.beach.name=沙滩
+biome.desertHills.name=沙漠丘陵
+biome.forestHills.name=森林丘陵
+biome.taigaHills.name=针叶林丘陵
+biome.extremeHillsEdge.name=山地边缘
+biome.jungle.name=丛林
+biome.jungleHills.name=丛林丘陵
+biome.desertRiver.name=沙漠河流
+biome.jungleRiver.name=丛林河流
+biome.swampRiver.name=沼泽河流
